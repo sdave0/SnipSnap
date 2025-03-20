@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "LLM Prompt Saver",
+  "version": "1.0",
+  "description": "Save and reuse prompts for emails & cover letters.",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  }
+}

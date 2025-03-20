@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLM Prompt Saver</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h2>Saved Prompts</h2>
+      <div class="header-buttons">
+        <button id="deleteMode" class="btn mode-btn">-</button>
+        <button id="addPrompt" class="btn mode-btn">+</button>
+      </div>
+    </header>
+    
+    <p id="noPromptsMessage" class="info">Add a prompt by pressing + to start.</p>
+    
+    <ul id="promptList" class="prompt-list"></ul>
+    
+    <!-- Input form is hidden by default -->
+    <div id="promptFormContainer" class="form-container hidden">
+      <input id="promptTitle" type="text" placeholder="Enter title..." class="input-field">
+      <textarea id="promptInput" placeholder="Enter your prompt..." class="input-field"></textarea>
+      <!-- Dropdown for optional tagging/color -->
+      <select id="promptColor" class="input-field">
+        <option value="">No Color</option>
+        <option value="red">Red</option>
+        <option value="blue">Blue</option>
+        <option value="green">Green</option>
+        <option value="yellow">Yellow</option>
+      </select>
+      <button id="savePrompt" class="btn save-btn">Save</button>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

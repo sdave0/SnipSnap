@@ -1,0 +1,152 @@
+:root {
+  --bg-color: #fff;
+  --text-color: #000;
+  --accent-color: #555;
+  --hover-bg: #f7f7f7;
+  --border-color: #ddd;
+  --transition-speed: 0.2s;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.container {
+  padding: 16px;
+  width: 320px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.btn {
+  background: none;
+  border: 1px solid var(--accent-color);
+  border-radius: 4px;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 1em;
+  padding: 4px 8px;
+  transition: background var(--transition-speed);
+}
+
+.btn:hover {
+  background: var(--hover-bg);
+}
+
+.mode-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.save-btn {
+  margin-top: 8px;
+}
+
+.info {
+  text-align: center;
+  color: var(--accent-color);
+  margin-top: 20px;
+  font-size: 0.95em;
+}
+
+.prompt-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.prompt-item {
+  padding: 10px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background var(--transition-speed);
+  cursor: pointer;
+}
+
+.prompt-item:hover {
+  background: var(--hover-bg);
+}
+
+.prompt-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 240px;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.prompt-title {
+  font-weight: bold;
+  word-wrap: break-word;
+}
+
+.prompt-text {
+  color: var(--accent-color);
+  font-size: 0.9em;
+  word-wrap: break-word;
+}
+
+.copied {
+  background-color: #d4edda;
+}
+
+.delete-icon {
+  color: red;
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.form-container {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1em;
+  transition: border-color var(--transition-speed);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.hidden {
+  display: none;
+}
