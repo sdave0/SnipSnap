@@ -1,0 +1,12 @@
+{
+    "manifest_version": 3,
+    "name": "SnipSnap",
+    "version": "1.0",
+    "description": "Save and reuse text or prompts.",
+    "permissions": ["storage"],
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": "icon.png"
+    }
+  }
+  
