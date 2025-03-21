@@ -1,9 +1,9 @@
 :root {
-  --bg-color: #fff;
-  --text-color: #000;
-  --accent-color: #555;
-  --hover-bg: #f7f7f7;
-  --border-color: #ddd;
+  --bg-color: #FAFAFA;       /* Soft off-white */
+  --text-color: #333333;     /* Charcoal text */
+  --accent-color: #666666;   /* Muted accent */
+  --hover-bg: #F0F0F0;
+  --border-color: #CCCCCC;
   --transition-speed: 0.2s;
 }
 
@@ -11,8 +11,9 @@
   box-sizing: border-box;
 }
 
+/* Use Helvetica for all text */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Helvetica', sans-serif;
   margin: 0;
   padding: 0;
   background-color: var(--bg-color);
@@ -41,6 +42,7 @@ body {
   gap: 6px;
 }
 
+/* Base button styling */
 .btn {
   background: none;
   border: 1px solid var(--accent-color);
@@ -56,15 +58,28 @@ body {
   background: var(--hover-bg);
 }
 
+/* Mode buttons (header buttons) now smaller */
 .mode-btn {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* Tag filter buttons remain 50% of mode-btn size */
+.tag-filter-btn {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--accent-color);
+  border-radius: 50%;
+  background-color: var(--hover-bg);
+  cursor: pointer;
+  margin: 0 2px;
+}
+
+/* Save button spacing */
 .save-btn {
   margin-top: 8px;
 }
@@ -92,47 +107,75 @@ body {
   cursor: pointer;
 }
 
+/* Fast copy animation */
+@keyframes copyFeedback {
+  0% { transform: scale(1); background-color: #d4edda; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); background-color: transparent; }
+}
+.copied {
+  animation: copyFeedback 0.3s ease-out;
+}
+
 .prompt-item:hover {
   background: var(--hover-bg);
+  transform: translateX(2px);
 }
 
 .prompt-content {
   display: flex;
   flex-direction: column;
   max-width: 240px;
+  border-radius: 4px;
+  position: relative;
+  width: 100%;
   padding: 4px;
   border-radius: 4px;
+  
 }
+
 
 .prompt-title {
   font-weight: bold;
   word-wrap: break-word;
 }
 
+/* Limit prompt text to one line with ellipsis */
 .prompt-text {
   color: var(--accent-color);
   font-size: 0.9em;
   word-wrap: break-word;
-}
-
-.copied {
-  background-color: #d4edda;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  width: 240px;           /* Fixed visible area for text */
 }
 
 .delete-icon {
-  color: red;
+  color: rgb(10, 10, 10);
   margin-left: 10px;
   cursor: pointer;
   font-weight: bold;
 }
-
+.input-field, 
+.input-field::placeholder {
+  font-family: 'Helvetica', sans-serif;
+}
+/* Enhanced prompt form styling */
 .form-container {
   margin-top: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Input field styling remains largely the same */
 .input-field {
   width: 100%;
   padding: 8px;
@@ -149,4 +192,57 @@ body {
 
 .hidden {
   display: none;
+}
+
+#tagButton {
+  font-family: 'Helvetica', sans-serif;
+  padding: 6px 10px;
+  border: 1px solid var(--accent-color);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+/* Tag selector styles */
+#tagSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#tagOptions {
+  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+}
+
+/* Base style for tag options (circles) */
+.tag-option {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 1px solid var(--accent-color);
+  
+}
+
+/* Define muted, posh colors matching main page theme */
+.tag-option.red   { background-color: #D4A5A5; }
+.tag-option.blue  { background-color: #A3BFD9; }
+.tag-option.green { background-color: #A5D4B5; }
+.tag-option.yellow{ background-color: #D9D4A5; }
+
+
+/* Edit icon rotation stays as defined */
+.edit-icon {
+  display: inline-block;
+  transform: rotate(45deg);
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.vertical-list-item {
+  animation: fadeInUp 0.5s ease-out;
 }

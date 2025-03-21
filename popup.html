@@ -8,11 +8,15 @@
 </head>
 <body>
   <div class="container">
+    <!-- Tag filter container: Only shows filter buttons for tags that exist -->
+    <div id="tagFilterContainer" class="header-buttons"></div>
+    
     <header class="header">
       <h2>Saved Prompts</h2>
       <div class="header-buttons">
-        <button id="deleteMode" class="btn mode-btn">-</button>
         <button id="addPrompt" class="btn mode-btn">+</button>
+        <button id="editMode" class="btn mode-btn" title="Edit Mode"><span class="edit-icon">!</span></button>
+        <button id="deleteMode" class="btn mode-btn">–</button>
       </div>
     </header>
     
@@ -21,20 +25,22 @@
     <ul id="promptList" class="prompt-list"></ul>
     
     <!-- Input form is hidden by default -->
-    <div id="promptFormContainer" class="form-container hidden">
-      <input id="promptTitle" type="text" placeholder="Enter title..." class="input-field">
-      <textarea id="promptInput" placeholder="Enter your prompt..." class="input-field"></textarea>
-      <!-- Dropdown for optional tagging/color -->
-      <select id="promptColor" class="input-field">
-        <option value="">No Color</option>
-        <option value="red">Red</option>
-        <option value="blue">Blue</option>
-        <option value="green">Green</option>
-        <option value="yellow">Yellow</option>
-      </select>
-      <button id="savePrompt" class="btn save-btn">Save</button>
+<div id="promptFormContainer" class="form-container hidden">
+  <input id="promptTitle" type="text" placeholder="Enter title..." class="input-field">
+  <textarea id="promptInput" placeholder="Enter your prompt..." class="input-field"></textarea>
+  <!-- Tag selector: a button that reveals colored circle options -->
+  <div id="tagSelector">
+    <button id="tagButton" class="btn">Add a tag?</button>
+    <div id="tagOptions" class="hidden tag-options">
+      <span class="tag-option red" data-color="red"></span>
+      <span class="tag-option blue" data-color="blue"></span>
+      <span class="tag-option green" data-color="green"></span>
+      <span class="tag-option yellow" data-color="yellow"></span>
     </div>
   </div>
+  <button id="savePrompt" class="btn save-btn">Save</button>
+</div>
+
   <script src="popup.js"></script>
 </body>
 </html>
