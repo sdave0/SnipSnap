@@ -211,110 +211,9 @@ textarea.input-field {
 .tag-option.yellow { background-color: var(--tag-yellow); }
 
 .tag-button {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  justify-content: center;
-}
-
-.tag-button.has-tag {
-  color: white;
-}
-
-.hidden {
-  display: none;
-}
-
-.info {
+  min-width: 80px;
+  height: 24px;
   text-align: center;
-  color: var(--text-secondary);
-  font-size: 0.813rem;
-  margin: 16px 0;
-}
-
-/* Edit and Delete icons */
-.edit-icon {
-  display: inline-block;
-  transform: rotate(45deg);
-  transition: transform 0.2s;
-}
-
-.btn.mode-btn.active .edit-icon {
-  transform: rotate(0deg);
-}
-
-.delete-icon {
-  color: #ef4444;
-  margin-left: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  padding: 2px 6px;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-
-.delete-icon:hover {
-  background-color: #fee2e2;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 2px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
-}
-
-.form-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.form-header h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.close-btn {
-  padding: 2px 6px;
-  font-size: 1.125rem;
-  line-height: 1;
-}
-
-.form-group {
-  margin-bottom: 12px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 0.813rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.template-toolbar {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.template-var {
-  padding: 3px 6px;
   font-size: 0.75rem;
 }
 
@@ -322,37 +221,75 @@ textarea.input-field {
   display: flex;
   gap: 6px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .tag-filter-btn {
   padding: 4px 8px;
   font-size: 0.75rem;
+  border-radius: 4px;
+  min-width: 40px;
 }
 
 .tag-filter-btn.active {
   outline: 2px solid var(--primary-color);
-  outline-offset: -2px;
+  outline-offset: -1px;
 }
 
-.btn.mode-btn.active {
-  background-color: var(--primary-color);
-  color: white;
+.form-group {
+  margin-bottom: 16px;
 }
 
-@keyframes copyFeedback {
-  0% { 
-    transform: translateY(0);
-  }
-  20% {
-    transform: translateY(-2px);
-  }
-  100% { 
-    transform: translateY(0);
-  }
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+.template-toolbar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.template-var {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+}
+
+.info {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin: 20px 0;
+}
+
+.hidden {
+  display: none;
 }
 
 .copied {
-  animation: copyFeedback 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.copied::after {
+  content: 'Copied!';
+  position: absolute;
+  top: -24px;
+  right: 8px;
+  background: var(--text-primary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  animation: fadeOut 0.3s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 @keyframes slideIn {
@@ -364,4 +301,58 @@ textarea.input-field {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.form-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  padding: 4px 8px;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.delete-icon {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.delete-icon:hover {
+  color: var(--text-primary);
+}
+
+.edit-icon {
+  display: inline-block;
+  transform: rotate(45deg);
+  font-style: normal;
 }
