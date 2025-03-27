@@ -3,44 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LLM Prompt Saver</title>
+  <title>SnipSnap</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
-    <!-- Tag filter container: Only shows filter buttons for tags that exist -->
-    <div id="tagFilterContainer" class="header-buttons"></div>
-    
-    <header class="header">
-      <h2>Saved Prompts</h2>
-      <div class="header-buttons">
-        <button id="addPrompt" class="btn mode-btn">+</button>
-        <button id="editMode" class="btn mode-btn" title="Edit Mode"><span class="edit-icon">!</span></button>
-        <button id="deleteMode" class="btn mode-btn">–</button>
+    <div id="mainView">
+      <header class="header">
+        <h2>My Snippets</h2>
+        <div class="header-buttons">
+          <button id="addPrompt" class="btn mode-btn" title="Add New Snippet">+</button>
+          <button id="editMode" class="btn mode-btn" title="Edit Mode"><span class="edit-icon">!</span></button>
+          <button id="deleteMode" class="btn mode-btn" title="Delete Mode">–</button>
+        </div>
+      </header>
+
+      <!-- Tag filter container -->
+      <div id="tagFilterContainer" class="tag-filter"></div>
+      
+      <p id="noPromptsMessage" class="info">Add a snippet by pressing + to start.</p>
+      
+      <ul id="promptList" class="prompt-list"></ul>
+    </div>
+
+    <!-- Add/Edit Form -->
+    <div id="promptFormContainer" class="form-container hidden">
+      <header class="form-header">
+        <h3 id="formTitle">Add New Snippet</h3>
+        <button id="closeForm" class="btn close-btn" title="Close Form">&times;</button>
+      </header>
+
+      <div class="form-group">
+        <label for="promptTitle">Title</label>
+        <input id="promptTitle" type="text" placeholder="Enter a descriptive title..." class="input-field">
       </div>
-    </header>
-    
-    <p id="noPromptsMessage" class="info">Add a prompt by pressing + to start.</p>
-    
-    <ul id="promptList" class="prompt-list"></ul>
-    
-    <!-- Input form is hidden by default -->
-<div id="promptFormContainer" class="form-container hidden">
-  <input id="promptTitle" type="text" placeholder="Enter title..." class="input-field">
-  <textarea id="promptInput" placeholder="Enter your prompt..." class="input-field"></textarea>
-  <!-- Tag selector: a button that reveals colored circle options -->
-  <div id="tagSelector">
-    <button id="tagButton" class="btn">Add a tag?</button>
-    <div id="tagOptions" class="hidden tag-options">
-      <span class="tag-option red" data-color="red"></span>
-      <span class="tag-option blue" data-color="blue"></span>
-      <span class="tag-option green" data-color="green"></span>
-      <span class="tag-option yellow" data-color="yellow"></span>
+
+      <div class="form-group">
+        <label for="promptInput">Content</label>
+        <div class="template-toolbar">
+          <button class="btn template-var" data-var="{{date}}">Date</button>
+          <button class="btn template-var" data-var="{{time}}">Time</button>
+          <button class="btn template-var" data-var="{{custom}}">Custom</button>
+        </div>
+        <textarea id="promptInput" placeholder="Enter your snippet content..." class="input-field"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Tag (Optional)</label>
+        <div class="tag-selector">
+          <button id="tagButton" class="btn tag-button">Add a tag?</button>
+          <div id="tagOptions" class="tag-options hidden">
+            <span class="tag-option red" data-color="red" title="Red Tag"></span>
+            <span class="tag-option blue" data-color="blue" title="Blue Tag"></span>
+            <span class="tag-option green" data-color="green" title="Green Tag"></span>
+            <span class="tag-option yellow" data-color="yellow" title="Yellow Tag"></span>
+          </div>
+        </div>
+      </div>
+
+      <button id="savePrompt" class="btn save-btn">Save Snippet</button>
     </div>
   </div>
-  <button id="savePrompt" class="btn save-btn">Save</button>
-</div>
-
   <script src="popup.js"></script>
 </body>
 </html>

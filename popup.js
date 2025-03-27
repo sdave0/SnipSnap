@@ -1,202 +1,245 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // UI Elements
+  const mainView = document.getElementById("mainView");
+  const formContainer = document.getElementById("promptFormContainer");
   const addButton = document.getElementById("addPrompt");
   const editButton = document.getElementById("editMode");
   const deleteButton = document.getElementById("deleteMode");
   const saveButton = document.getElementById("savePrompt");
+  const closeFormButton = document.getElementById("closeForm");
   const promptTitle = document.getElementById("promptTitle");
   const promptInput = document.getElementById("promptInput");
   const promptList = document.getElementById("promptList");
-  const promptFormContainer = document.getElementById("promptFormContainer");
   const noPromptsMessage = document.getElementById("noPromptsMessage");
   const tagButton = document.getElementById("tagButton");
   const tagOptions = document.getElementById("tagOptions");
   const tagFilterContainer = document.getElementById("tagFilterContainer");
+  const formTitle = document.getElementById("formTitle");
 
   let isDeleteMode = false;
   let isEditMode = false;
-  let editingIndex = null; // index of the prompt being edited (from the full list)
-  let selectedTag = "";      // For saving prompt tag selection
-  let activeFilter = "";     // For filtering prompts
+  let editingIndex = null;
+  let selectedTag = "";
+  let activeFilter = "";
 
-  // Updated function: return a background that's roughly 30% lighter than the base tone
-  // New posh muted colors for tags
+  // Template variable handlers
+  const templateVarButtons = document.querySelectorAll('.template-var');
+  templateVarButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const variable = btn.dataset.var;
+      if (variable === '{{custom}}') {
+        const customVar = prompt('Enter variable name:');
+        if (customVar) {
+          insertAtCursor(promptInput, `{{${customVar}}}`);
+        }
+      } else {
+        insertAtCursor(promptInput, variable);
+      }
+    });
+  });
+
+  function insertAtCursor(field, text) {
+    const start = field.selectionStart;
+    const end = field.selectionEnd;
+    const before = field.value.substring(0, start);
+    const after = field.value.substring(end);
+    field.value = before + text + after;
+    field.focus();
+    field.selectionStart = field.selectionEnd = start + text.length;
+  }
+
+  // Process template variables in text
+  function processTemplate(text) {
+    const now = new Date();
+    return text.replace(/{{(\w+)}}/g, (match, variable) => {
+      switch(variable.toLowerCase()) {
+        case 'date':
+          return now.toLocaleDateString();
+        case 'time':
+          return now.toLocaleTimeString();
+        default:
+          return match; // Keep custom variables as is
+      }
+    });
+  }
+
   const getLightColor = color => {
     const colors = {
-      red: "#D4A5A5",    // muted rose
-      blue: "#A3BFD9",   // muted blue-gray
-      green: "#A5D4B5",  // muted green
-      yellow: "#D9D4A5"  // muted mustard
+      red: "#e3655b",
+      blue: "#BDD9F2",
+      green: "#A7C957",
+      yellow: "#F2E8CF"
     };
     return colors[color] || "";
   };
 
-  // Load prompts from storage and update the list and tag filter
+  // Show/hide form
+  function toggleForm(show, isEdit = false) {
+    if (show) {
+      mainView.classList.add('hidden');
+      formContainer.classList.remove('hidden');
+      formTitle.textContent = isEdit ? 'Edit Snippet' : 'Add New Snippet';
+    } else {
+      mainView.classList.remove('hidden');
+      formContainer.classList.add('hidden');
+      promptTitle.value = '';
+      promptInput.value = '';
+      selectedTag = '';
+      editingIndex = null;
+      tagButton.style.backgroundColor = '';
+      tagButton.textContent = 'Add a tag?';
+    }
+  }
+
+  // Load and display prompts
   const loadPrompts = () => {
     chrome.storage.local.get(["prompts"], result => {
       const prompts = result.prompts || [];
       promptList.innerHTML = "";
 
-      // Build set of tag colors that exist (non-empty) in prompts.
       const tagSet = new Set();
       prompts.forEach(p => {
         if (p.color) tagSet.add(p.color);
       });
       updateTagFilter(Array.from(tagSet));
 
-      // Filter prompts if a filter is active
       const filteredPrompts = activeFilter 
         ? prompts.filter(p => p.color === activeFilter)
         : prompts;
 
       noPromptsMessage.style.display = filteredPrompts.length ? "none" : "block";
+      
+      // Display all prompts with scrolling
       filteredPrompts.forEach((prompt, index) => {
         const { title, text, color } = prompt;
         const li = document.createElement("li");
         li.className = "prompt-item";
         
-        // Create container for prompt content with optional background color
         const container = document.createElement("div");
         container.className = "prompt-content";
         if (color) {
           container.style.backgroundColor = getLightColor(color);
         }
-        container.innerHTML = `<strong class="prompt-title">${title}</strong>
-                               <span class="prompt-text">${text}</span>`;
+        
+        const processedText = processTemplate(text);
+        container.innerHTML = `
+          <strong class="prompt-title">${title}</strong>
+          <span class="prompt-text">${processedText}</span>
+        `;
+        
         li.appendChild(container);
         
-        // In delete mode, show delete icon.
         if (isDeleteMode) {
           const deleteIcon = document.createElement("span");
           deleteIcon.textContent = " – ";
           deleteIcon.className = "delete-icon";
           deleteIcon.addEventListener("click", e => {
             e.stopPropagation();
-            // Map filtered index back to actual index in full list.
             deletePrompt(prompt);
           });
           li.appendChild(deleteIcon);
         } else if (isEditMode) {
-          // In edit mode, clicking a prompt loads it into the form for editing.
           li.addEventListener("click", () => {
             editingIndex = prompts.findIndex(p => p.title === title && p.text === text);
             promptTitle.value = title;
             promptInput.value = text;
             selectedTag = color || "";
-            // Update tag button appearance based on the selected tag.
             if (selectedTag) {
-              tagButton.style.backgroundColor = selectedTag;
+              tagButton.style.backgroundColor = getLightColor(selectedTag);
               tagButton.textContent = "";
             } else {
               tagButton.style.backgroundColor = "";
               tagButton.textContent = "Add a tag?";
             }
-            // Show the form (if not already visible)
-            if (promptFormContainer.classList.contains("hidden")) {
-              promptFormContainer.classList.remove("hidden");
-            }
+            toggleForm(true, true);
           });
         } else {
-          // In normal mode, clicking copies the text.
           li.addEventListener("click", () => {
-            navigator.clipboard.writeText(text);
+            const processedText = processTemplate(text);
+            navigator.clipboard.writeText(processedText);
             li.classList.add("copied");
-            setTimeout(() => li.classList.remove("copied"), 1000);
+            setTimeout(() => li.classList.remove("copied"), 300);
           });
         }
+        
         promptList.appendChild(li);
       });
     });
   };
 
-  // Delete prompt by matching its data
   const deletePrompt = promptToDelete => {
     chrome.storage.local.get(["prompts"], result => {
       let prompts = result.prompts || [];
-      const actualIndex = prompts.findIndex(p => p.title === promptToDelete.title && p.text === promptToDelete.text);
-      if (actualIndex > -1) {
-        prompts.splice(actualIndex, 1);
-        chrome.storage.local.set({ prompts }, loadPrompts);
-      }
+      prompts = prompts.filter(p => 
+        p.title !== promptToDelete.title || p.text !== promptToDelete.text
+      );
+      chrome.storage.local.set({ prompts }, loadPrompts);
     });
   };
 
-  // Update tag filter buttons based on available tags in prompts
-  const updateTagFilter = (tags) => {
-    tagFilterContainer.innerHTML = "";
-    tags.forEach(tag => {
-      const btn = document.createElement("button");
-      btn.className = "tag-filter-btn";
-      btn.style.backgroundColor = getLightColor(tag);
-      btn.title = tag;
-      if (activeFilter === tag) {
-        btn.style.border = "2px solid black";
-      }
-      btn.addEventListener("click", () => {
-        activeFilter = activeFilter === tag ? "" : tag;
+  function updateTagFilter(tags) {
+    tagFilterContainer.innerHTML = '';
+    if (tags.length) {
+      const allButton = document.createElement('button');
+      allButton.className = `btn tag-filter-btn ${!activeFilter ? 'active' : ''}`;
+      allButton.textContent = 'All';
+      allButton.addEventListener('click', () => {
+        activeFilter = '';
         loadPrompts();
+        document.querySelectorAll('.tag-filter-btn').forEach(btn => btn.classList.remove('active'));
+        allButton.classList.add('active');
       });
-      tagFilterContainer.appendChild(btn);
-    });
-  };
+      tagFilterContainer.appendChild(allButton);
 
-  addButton.addEventListener("click", () => {
-    // When adding a new prompt, exit edit mode.
-    isEditMode = false;
-    editingIndex = null;
-    editButton.style.backgroundColor = "";
-    promptFormContainer.classList.toggle("hidden");
-    if (!promptFormContainer.classList.contains("hidden")) {
-      promptTitle.focus();
-      // Clear the form for new input.
-      promptTitle.value = "";
-      promptInput.value = "";
-      selectedTag = "";
-      tagButton.style.backgroundColor = "";
-      tagButton.textContent = "Add a tag?";
+      tags.forEach(color => {
+        const button = document.createElement('button');
+        button.className = `btn tag-filter-btn ${activeFilter === color ? 'active' : ''}`;
+        button.style.backgroundColor = getLightColor(color);
+        button.addEventListener('click', () => {
+          activeFilter = activeFilter === color ? '' : color;
+          loadPrompts();
+          document.querySelectorAll('.tag-filter-btn').forEach(btn => btn.classList.remove('active'));
+          if (activeFilter) button.classList.add('active');
+        });
+        tagFilterContainer.appendChild(button);
+      });
     }
+  }
+
+  // Event Listeners
+  addButton.addEventListener("click", () => {
+    isEditMode = false;
+    toggleForm(true);
   });
 
-  deleteButton.addEventListener("click", () => {
-    // Exit edit mode when switching to delete mode.
-    isEditMode = false;
-    editButton.style.backgroundColor = "";
-    editingIndex = null;
-    isDeleteMode = !isDeleteMode;
-    deleteButton.textContent = isDeleteMode ? "×" : "–";
-    loadPrompts();
+  closeFormButton.addEventListener("click", () => {
+    toggleForm(false);
   });
 
   editButton.addEventListener("click", () => {
-    // Toggle edit mode. When enabled, disable delete mode.
     isEditMode = !isEditMode;
-    if (isEditMode) {
-      isDeleteMode = false;
-      deleteButton.textContent = "–";
-      // Highlight the edit button to indicate active mode.
-      editButton.style.backgroundColor = varAccent();
-    } else {
-      editButton.style.backgroundColor = "";
-      editingIndex = null;
-    }
+    isDeleteMode = false;
+    editButton.classList.toggle("active");
+    deleteButton.classList.remove("active");
     loadPrompts();
   });
 
-  // Helper to get a slightly different accent shade for active mode.
-  const varAccent = () => {
-    // For example, darken the accent a bit.
-    return "#555555";
-  };
+  deleteButton.addEventListener("click", () => {
+    isDeleteMode = !isDeleteMode;
+    isEditMode = false;
+    deleteButton.classList.toggle("active");
+    editButton.classList.remove("active");
+    loadPrompts();
+  });
 
-  // Toggle tag options when clicking the "Add a tag?" button
   tagButton.addEventListener("click", () => {
     tagOptions.classList.toggle("hidden");
   });
 
-  // When a tag option is clicked, set the selected tag
-  Array.from(tagOptions.children).forEach(option => {
+  document.querySelectorAll(".tag-option").forEach(option => {
     option.addEventListener("click", () => {
-      selectedTag = option.getAttribute("data-color");
-      tagButton.style.backgroundColor = selectedTag;
+      selectedTag = option.dataset.color;
+      tagButton.style.backgroundColor = getLightColor(selectedTag);
       tagButton.textContent = "";
       tagOptions.classList.add("hidden");
     });
@@ -205,38 +248,29 @@ document.addEventListener("DOMContentLoaded", () => {
   saveButton.addEventListener("click", () => {
     const title = promptTitle.value.trim();
     const text = promptInput.value.trim();
-    const color = selectedTag;
-    if (!title || !text) return;
     
+    if (!title || !text) {
+      alert("Please fill in both title and content.");
+      return;
+    }
+
     chrome.storage.local.get(["prompts"], result => {
       let prompts = result.prompts || [];
-      if (isEditMode && editingIndex !== null) {
-        // Update the existing prompt.
-        prompts[editingIndex] = { title, text, color };
-        // Exit edit mode after update.
-        isEditMode = false;
-        editingIndex = null;
-        editButton.style.backgroundColor = "";
+      const newPrompt = { title, text, color: selectedTag };
+      
+      if (editingIndex !== null) {
+        prompts[editingIndex] = newPrompt;
       } else {
-        // Add a new prompt.
-        prompts.push({ title, text, color });
+        prompts.push(newPrompt);
       }
+      
       chrome.storage.local.set({ prompts }, () => {
-        // Reset form fields and tag selector
-        promptTitle.value = "";
-        promptInput.value = "";
-        selectedTag = "";
-        tagButton.style.backgroundColor = "";
-        tagButton.textContent = "Add a tag?";
-        tagOptions.classList.add("hidden");
+        toggleForm(false);
         loadPrompts();
       });
     });
-    
-    promptFormContainer.classList.add("hidden");
   });
 
-  // Ensure form is hidden at startup and load prompts
-  promptFormContainer.classList.add("hidden");
+  // Initial load
   loadPrompts();
 });
